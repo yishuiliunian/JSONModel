@@ -19,6 +19,8 @@
 
 #import <objc/runtime.h>
 #import <objc/message.h>
+#import "NSString+Tools.h"
+#import "Product.h"
 
 @interface MasterViewController () {
     NSMutableArray *_objects;
@@ -118,13 +120,20 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    NSString* json = @"{\"id\":1, \"answer\": {\"name1\":\"marin\"}, \"dict\":[], \"description\":\"Marin\"}";
-    TopModel* tm = [[TopModel alloc] initWithString:json error:nil];
-    NSLog(@"tm: %@", tm.toDictionary);
-    NSLog(@"to string: %@", tm.toJSONString);
-    tm = [[TopModel alloc] initWithData:[json dataUsingEncoding:NSUTF8StringEncoding] error:nil];
-    NSLog(@"tm - WithData : %@", tm.toDictionary);
-    NSLog(@"to string - WithData : %@", tm.toJSONString);
+    
+    NSString* camelStr = @"modelNo";
+    NSLog(@"is camel %d" , [camelStr isCamelString]);
+    NSLog(@"camel array  %@", [camelStr sperateByCamel]);
+    
+    
+    NSDictionary* dic = @{@"id":@"123", @"name":@"little", @"modelNo":@"1", @"modelDesc":@"2"};
+    
+    
+    
+    NSString* json = @"{\"id\":1, \"answerName\":\"marin\", \"dict\":[], \"description\":\"Marin\"}";
+    
+    Product* product = [[Product new] initWithCamelDictionary:dic error:nil];
+ 
 }
 
 -(IBAction)actionLoadCall:(id)sender

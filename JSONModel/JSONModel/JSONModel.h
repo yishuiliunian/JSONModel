@@ -101,6 +101,8 @@ lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
   -(instancetype)initWithDictionary:(NSDictionary*)dict error:(NSError**)err;
 
 
+- (instancetype) initWithCamelDictionary:(NSDictionary*)dict error:(NSError**)err;
+
 /**
  * All JSONModel classes should implement initWithData:error:
  *
@@ -317,5 +319,8 @@ lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
  * it'll just try to match the dictionary keys to the model's properties
  */
 -(void)mergeFromDictionary:(NSDictionary*)dict useKeyMapping:(BOOL)useKeyMapping;
+
+
+- (NSDictionary*) transformDictionaryToCustom:(NSDictionary*)dic;
 
 @end

@@ -21,11 +21,13 @@
 
 #import <objc/runtime.h>
 #import <objc/message.h>
+#import <wctype.h>
 
 
 #import "JSONModel.h"
 #import "JSONModelClassProperty.h"
 #import "JSONModelArray.h"
+#import "NSString+Tools.h"
 
 #pragma mark - associated objects names
 static const char * kMapperObjectKey;
@@ -1291,4 +1293,39 @@ static JSONKeyMapper* globalKeyMapper = nil;
     return YES;
 }
 
+- (instancetype) initWithCamelDictionary:(NSDictionary *)dict error:(NSError *__autoreleasing *)err
+{
+    dict = [self transformDictionaryToCustom:dict];
+    return [self initWithDictionary:dict error:err];
+}
+
+- (NSDictionary*) transformDictionaryToCustom:(NSDictionary*)dic
+{
+    NSMutableDictionary* dictionary = [NSMutableDictionary new];
+    NSArray* allProperties =  [self __properties__];
+    
+    NSMutableArray* subpropertys = [NSMutableArray new];
+    for (JSONModelClassProperty* property in allProperties) {
+        if ([property.type isSubclassOfClass:[JSONModel class]]) {
+            NSString* name = [property.name lowercaseString];
+            NSMutableDictionary* subDic = [NSMutableDictionary new];
+            for (NSString* key  in dic) {
+                if ([key hasPrefix:name]) {
+                    
+                    [subpropertys addObject:key];
+                    
+                    NSString* subKey = [[key substringFromIndex:name.length] lowerFirstCharacterString];
+                    subDic[subKey] = dic[key];
+                }
+            }
+            dictionary[property.name] = subDic;
+        }
+    }
+    for (NSString* key  in dic) {
+        if (![subpropertys containsObject:key]) {
+            dictionary[key] = dic[key];
+        }
+    }
+    return dictionary;
+}
 @end
